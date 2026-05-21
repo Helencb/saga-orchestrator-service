@@ -1,0 +1,39 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: saga-orchestrator-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/saga_db
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  endpoint:
+    health:
+      show-details: always
+
+aws:
+  access-key: YOUR_ACCESS_KEY
+  secret-key: YOUR_SECRET_KEY
+  region: us-east-1
+
+saga:
+  max-retry: 5
+  timeout-seconds: 30
+  order-topic: order-topic
+  payment-topic: payment-topic
+  inventory-topic: inventory-topic
