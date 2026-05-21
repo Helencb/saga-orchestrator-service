@@ -1,0 +1,21 @@
+package helen.com.sagaorchestratorservice.saga.state;
+
+public enum SagaEventType {
+    ORDER_CREATED,
+
+    STOCK_RESERVED,
+    STOCK_RESERVATION_FAILED,
+
+    PAYMENT_PROCESSED,
+    PAYMENT_FAILED,
+
+    ORDER_CONFIRMED,
+    ORDER_CANCELLED,
+
+    NOTIFICATION_SENT,
+
+    SAGA_STARTED,
+    SAGA_COMPLETED,
+    SAGA_FAILED,
+    SAGA_COMPENSATED
+}
