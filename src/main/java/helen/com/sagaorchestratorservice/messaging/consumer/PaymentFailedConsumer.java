@@ -1,15 +1,18 @@
 package helen.com.sagaorchestratorservice.messaging.consumer;
 
 import helen.com.sagaorchestratorservice.messaging.event.PaymentFailedEvent;
+import helen.com.sagaorchestratorservice.saga.orchestrator.OrderSagaOrchestrator;
 import io.awspring.cloud.sqs.annotation.SqsListener;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Slf4j
+@RequiredArgsConstructor
 @Component
 public class PaymentFailedConsumer {
+    private final OrderSagaOrchestrator orchestrator;
+
     @SqsListener("payment-failed-queue")
     public void consume(PaymentFailedEvent event) {
-        log.info("PAYMENT_FAILED event received: {}", event.getSagaId());
+        orchestrator.handlePaymentFailed(event);
     }
 }

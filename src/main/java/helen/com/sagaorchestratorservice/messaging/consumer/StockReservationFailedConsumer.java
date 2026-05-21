@@ -1,15 +1,19 @@
 package helen.com.sagaorchestratorservice.messaging.consumer;
 
 import helen.com.sagaorchestratorservice.messaging.event.StockReservationFailedEvent;
+import helen.com.sagaorchestratorservice.saga.orchestrator.OrderSagaOrchestrator;
 import io.awspring.cloud.sqs.annotation.SqsListener;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
-@Slf4j
+@RequiredArgsConstructor
 @Component
 public class StockReservationFailedConsumer {
+    private final OrderSagaOrchestrator orchestrator;
+
     @SqsListener("stock-failed-queue")
     public void consume(StockReservationFailedEvent event) {
-        log.info("STOCK_FAILED event received: {}", event.getSagaId());
+        orchestrator.handleStockFailed(event);
     }
 }
