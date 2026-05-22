@@ -1,5 +1,6 @@
 package helen.com.sagaorchestratorservice.saga.orchestrator;
 
+import helen.com.sagaorchestratorservice.compensation.CompensationService;
 import helen.com.sagaorchestratorservice.messaging.command.ProcessPaymentCommand;
 import helen.com.sagaorchestratorservice.messaging.command.ReleaseStockCommand;
 import helen.com.sagaorchestratorservice.messaging.command.ReserveStockCommand;
@@ -27,6 +28,7 @@ public class OrderSagaOrchestrator {
     private final SagaStepService stepService;
     private final InventoryCommandProducer inventoryProducer;
     private final PaymentCommandProducer paymentProducer;
+    private final CompensationService compensationService;
 
     public void handleOrderCreated(OrderCreatedEvent event) {
         log.info("Starting saga: {}", event.getSagaId());
@@ -160,6 +162,30 @@ public class OrderSagaOrchestrator {
                 "RELEASE_STOCK",
                 SagaStepStatus.RUNNING,
                 null
+        );
+    }
+
+    public void handlePaymentFailed(PaymentFailedEvent event) {
+        log.error("Payment failed: {}", event.getSagaId());
+
+        eventService.saveEvent(
+                event.getSagaId(),
+                SagaEventType.PAYMENT_FAILED,
+                event,
+                event.getCorrelationId()
+        );
+
+        stepService.saveStep(
+                event.getSagaId(),
+                "PROCESS_PAYMENT",
+                SagaStepStatus.FAILED,
+                event.getReason()
+        );
+
+        compensationService.startCompensation(
+                event.getSagaId(),
+                event.getOrderId(),
+                event.getCorrelationId()
         );
     }
 }
