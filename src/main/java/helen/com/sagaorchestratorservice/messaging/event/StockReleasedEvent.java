@@ -11,6 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class StockReleasedEvent {
     private UUID sagaId;
-    private String orderId;
+    private UUID orderId;
     private String correlationId;
 }

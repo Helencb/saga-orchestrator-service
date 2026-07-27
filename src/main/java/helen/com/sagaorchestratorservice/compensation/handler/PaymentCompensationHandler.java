@@ -35,4 +35,9 @@ public class PaymentCompensationHandler implements CompensationHandler {
     public String getHandlerName() {
         return "PAYMENT_COMPENSATION";
     }
+
+    @Override
+    public String getRequiredStepName() {
+        return "PROCESS_PAYMENT";
+    }
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OrderCompensationHandler implements CompensationHandler{
+public class OrderCompensationHandler implements CompensationHandler {
     private final OrderCommandProducer producer;
 
     @Override
@@ -34,5 +34,10 @@ public class OrderCompensationHandler implements CompensationHandler{
     @Override
     public String getHandlerName() {
         return "ORDER_COMPENSATION";
+    }
+
+    @Override
+    public String getRequiredStepName() {
+        return "CONFIRM_ORDER";
     }
 }

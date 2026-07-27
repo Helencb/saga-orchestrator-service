@@ -8,4 +8,12 @@ public interface CompensationHandler {
     Integer getExecutionOrder();
 
     String getHandlerName();
+
+    /**
+     * Nome do step (SagaStepEntity.stepName) que precisa ter terminado com
+     * SUCCESS para que esta compensação faça sentido.
+     * Ex.: STOCK só deve ser liberado se RESERVE_STOCK teve sucesso;
+     * não faz sentido mandar ReleaseStockCommand se o estoque nunca foi reservado.
+     */
+    String getRequiredStepName();
 }

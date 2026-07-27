@@ -36,4 +36,9 @@ public class StockCompensationHandler implements CompensationHandler {
     public String getHandlerName() {
         return "STOCK_COMPENSATION";
     }
+
+    @Override
+    public String getRequiredStepName() {
+        return "RESERVE_STOCK";
+    }
 }

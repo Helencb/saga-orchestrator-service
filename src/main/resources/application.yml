@@ -7,33 +7,61 @@ spring:
 
   datasource:
     url: jdbc:mysql://localhost:3306/saga_db
-    username: root
-    password: root
+    username: ${DB_USERNAME:root}
+    # Sem default de senha real: em produção a env var é obrigatória
+    # (o app falha ao subir em vez de usar uma senha fraca conhecida).
+    password: ${DB_PASSWORD:root}
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
-    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
-
+        # Antes era '*', expondo env/beans/heapdump sem autenticação.
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
 
 aws:
-  access-key: YOUR_ACCESS_KEY
-  secret-key: YOUR_SECRET_KEY
-  region: us-east-1
+  access-key: ${AWS_ACCESS_KEY:YOUR_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY:YOUR_SECRET_KEY}
+  region: ${AWS_REGION:us-east-1}
+
+security:
+  actuator:
+    username: ${ACTUATOR_USERNAME:admin}
+    password: ${ACTUATOR_PASSWORD:changeit}
 
 saga:
-  max-retry: 5
-  timeout-seconds: 30
-  order-topic: order-topic
-  payment-topic: payment-topic
-  inventory-topic: inventory-topic
+  max-retry: 3
+  timeout-seconds: 300
+  timeout-check-interval-ms: 60000
+
+  order-topic: ${SAGA_ORDER_TOPIC:arn:aws:sns:us-east-1:000000000000:order-topic}
+  payment-topic: ${SAGA_PAYMENT_TOPIC:arn:aws:sns:us-east-1:000000000000:payment-topic}
+  inventory-topic: ${SAGA_INVENTORY_TOPIC:arn:aws:sns:us-east-1:000000000000:inventory-topic}
+  retry-topic: ${SAGA_RETRY_TOPIC:arn:aws:sns:us-east-1:000000000000:retry-compensation-topic}
+
+  queues:
+    order-created: ${SAGA_QUEUE_ORDER_CREATED:order-created-queue}
+    stock-reserved: ${SAGA_QUEUE_STOCK_RESERVED:stock-reserved-queue}
+    stock-failed: ${SAGA_QUEUE_STOCK_FAILED:stock-failed-queue}
+    stock-released: ${SAGA_QUEUE_STOCK_RELEASED:stock-released-queue}
+    payment-processed: ${SAGA_QUEUE_PAYMENT_PROCESSED:payment-processed-queue}
+    payment-failed: ${SAGA_QUEUE_PAYMENT_FAILED:payment-failed-queue}
+    payment-refunded: ${SAGA_QUEUE_PAYMENT_REFUNDED:payment-refunded-queue}
+    order-confirmed: ${SAGA_QUEUE_ORDER_CONFIRMED:order-confirmed-queue}
+    order-cancelled: ${SAGA_QUEUE_ORDER_CANCELLED:order-cancelled-queue}
+    retry-compensation: ${SAGA_QUEUE_RETRY_COMPENSATION:retry-compensation-queue}

@@ -1,4 +1,4 @@
-package helen.com.sagaorchestratorservice.messaging.consumer;
+package helen.com.sagaorchestratorservice.messaging.consumer.payment;
 
 import helen.com.sagaorchestratorservice.messaging.event.PaymentProcessedEvent;
 import helen.com.sagaorchestratorservice.saga.orchestrator.OrderSagaOrchestrator;
@@ -9,11 +9,13 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class PaymentProcessedConsumer {
     private final OrderSagaOrchestrator orchestrator;
 
-    @SqsListener("payment-processed-queue")
+    @SqsListener("${saga.queues.payment-processed}")
     public void consume(PaymentProcessedEvent event) {
+        log.info("Received PaymentProcessedEvent for saga {}", event.getSagaId());
         orchestrator.handlePaymentProcessed(event);
     }
 }
