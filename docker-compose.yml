@@ -46,6 +46,13 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USERNAME: guest
       RABBITMQ_PASSWORD: guest
+      # O eureka-server é um projeto separado, rodado fora deste compose (ver
+      # repositório eureka-server). host.docker.internal alcança o host a partir
+      # do container no Docker Desktop (Windows/Mac); no Linux use a rede do host
+      # ou aponte para o IP/hostname real de onde o Eureka estiver rodando.
+      EUREKA_HOST: host.docker.internal
+      EUREKA_USERNAME: admin
+      EUREKA_PASSWORD: "123456"
     depends_on:
       mysql:
         condition: service_healthy

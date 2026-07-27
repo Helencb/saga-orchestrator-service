@@ -22,6 +22,12 @@ spring:
       simple:
         auto-startup: false
 
+eureka:
+  client:
+    # Sem um Eureka Server real disponível durante o build, o teste de contexto
+    # não deve tentar se registrar nem buscar o registro.
+    enabled: false
+
 security:
   actuator:
     username: test

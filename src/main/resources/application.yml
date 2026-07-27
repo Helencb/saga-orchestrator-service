@@ -45,6 +45,17 @@ security:
     username: ${ACTUATOR_USERNAME:admin}
     password: ${ACTUATOR_PASSWORD:changeit}
 
+eureka:
+  client:
+    service-url:
+      # O eureka-server exige Basic Auth em todas as rotas - sem as credenciais
+      # embutidas aqui, o client não consegue nem se registrar nem buscar o registro.
+      defaultZone: http://${EUREKA_USERNAME:admin}:${EUREKA_PASSWORD:123456}@${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
 saga:
   max-retry: 3
   timeout-seconds: 300

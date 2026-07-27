@@ -110,4 +110,22 @@ class SagaControllerTest {
         mockMvc.perform(get("/api/v1/sagas/{sagaId}", SAGA_ID).with(httpBasic("admin", "test-pass")))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void trustingGatewayHeadersWithAdminRoleIsAllowed() throws Exception {
+        when(sagaService.findBySagaId(any())).thenReturn(aSaga());
+
+        mockMvc.perform(get("/api/v1/sagas/{sagaId}", SAGA_ID)
+                        .header("X-User-Id", "user-123")
+                        .header("X-User-Role", "ADMIN"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void trustingGatewayHeadersWithNonAdminRoleIsForbidden() throws Exception {
+        mockMvc.perform(get("/api/v1/sagas/{sagaId}", SAGA_ID)
+                        .header("X-User-Id", "user-123")
+                        .header("X-User-Role", "USER"))
+                .andExpect(status().isForbidden());
+    }
 }
