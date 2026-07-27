@@ -1,0 +1,45 @@
+# Config usada só pelo contextLoads() (@SpringBootTest) - banco H2 em memória e
+# Flyway desligado, pra não depender de um MySQL real rodando pra rodar "mvn test".
+spring:
+  datasource:
+    url: jdbc:h2:mem:saga_test;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  flyway:
+    enabled: false
+
+  rabbitmq:
+    # Sem um broker real disponível durante o build, o teste de contexto não pode
+    # deixar o RabbitAdmin declarar exchanges/filas nem os @RabbitListener conectarem.
+    dynamic: false
+    listener:
+      simple:
+        auto-startup: false
+
+security:
+  actuator:
+    username: test
+    password: test
+
+saga:
+  order-exchange: order-exchange
+  payment-exchange: payment-exchange
+  inventory-exchange: inventory-exchange
+  retry-exchange: retry-exchange
+  queues:
+    order-created: order-created-queue
+    stock-reserved: stock-reserved-queue
+    stock-failed: stock-failed-queue
+    stock-released: stock-released-queue
+    payment-processed: payment-processed-queue
+    payment-failed: payment-failed-queue
+    payment-refunded: payment-refunded-queue
+    order-confirmed: order-confirmed-queue
+    order-cancelled: order-cancelled-queue
+    retry-compensation: retry-compensation-queue

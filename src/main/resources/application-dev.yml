@@ -1,0 +1,12 @@
+# Perfil de desenvolvimento local: RabbitMQ e MySQL subidos pelo docker-compose
+# (docker-compose.yml, na raiz do projeto). Ative com SPRING_PROFILES_ACTIVE=dev
+# (ou --spring.profiles.active=dev). O host/porta padrão do RabbitMQ (localhost:5672,
+# guest/guest) já bate com o que o compose expõe, então nada precisa ser sobrescrito aqui.
+
+spring:
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    helen.com.sagaorchestratorservice: DEBUG

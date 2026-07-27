@@ -73,6 +73,18 @@ public class SagaTransitionRegistry {
             }
             register(state, SagaEventType.SAGA_TIMEOUT, OrderSagaState.FAILED);
         }
+
+        // Compensação disparada manualmente (endpoint administrativo) - qualquer
+        // estado em andamento que ainda não esteja compensando pode ser levado a COMPENSATING.
+        for (OrderSagaState state : OrderSagaState.values()) {
+            if (state == OrderSagaState.COMPLETED
+                    || state == OrderSagaState.FAILED
+                    || state == OrderSagaState.COMPENSATED
+                    || state == OrderSagaState.COMPENSATING) {
+                continue;
+            }
+            register(state, SagaEventType.MANUAL_COMPENSATION_TRIGGERED, OrderSagaState.COMPENSATING);
+        }
     }
 
     private void register(

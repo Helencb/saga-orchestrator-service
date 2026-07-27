@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class InventoryCommandProducer {
     private final SagaCommandProducer producer;
 
-    @Value("${saga.inventory-topic}")
-    private String inventoryTopic;
+    @Value("${saga.inventory-exchange}")
+    private String inventoryExchange;
 
     public void reserveStock(ReserveStockCommand command) {
-        producer.publish(inventoryTopic, command);
+        producer.publish(inventoryExchange, "stock.reserve", command);
     }
 
     public void releaseStock(ReleaseStockCommand command) {
-        producer.publish(inventoryTopic, command);
+        producer.publish(inventoryExchange, "stock.release", command);
     }
 }

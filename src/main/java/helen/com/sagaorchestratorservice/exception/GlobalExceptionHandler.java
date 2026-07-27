@@ -5,13 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -20,6 +18,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SagaNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(SagaNotFoundException ex) {
         log.warn("Saga not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(errorBody(404, ex.getMessage()));
+    }
+
+    @ExceptionHandler(CompensationHandlerNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleCompensationHandlerNotFound(
+            CompensationHandlerNotFoundException ex) {
+        log.warn("Compensation handler not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(errorBody(404, ex.getMessage()));
     }
@@ -38,16 +44,6 @@ public class GlobalExceptionHandler {
         log.warn("Concurrent update conflict on saga: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(errorBody(409, "Concurrent update detected, please retry"));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .collect(Collectors.joining("; "));
-        log.warn("Validation failed: {}", message);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(errorBody(400, message));
     }
 
     @ExceptionHandler(MessagePublishException.class)

@@ -48,6 +48,10 @@ public class CompensationExecutor {
      * Não filtra por step porque, se chegou aqui, já foi decidido antes que
      * esse handler era aplicável.
      */
+    public boolean handlerExists(String handlerName) {
+        return handlers.stream().anyMatch(h -> h.getHandlerName().equals(handlerName));
+    }
+
     public void retry(String handlerName, UUID sagaId, UUID orderId, String correlationId, int attempt) {
         handlers.stream()
                 .filter(h -> h.getHandlerName().equals(handlerName))

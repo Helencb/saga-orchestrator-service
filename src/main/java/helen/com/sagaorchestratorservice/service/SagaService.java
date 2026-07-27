@@ -10,6 +10,8 @@ import helen.com.sagaorchestratorservice.statemachine.OrderStateMachine;
 import helen.com.sagaorchestratorservice.statemachine.SagaStateMachineException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,5 +155,31 @@ public class SagaService {
     public List<SagaInstanceEntity> findTimedOutSagas(int timeoutSeconds) {
         LocalDateTime cutoff = LocalDateTime.now().minusSeconds(timeoutSeconds);
         return repository.findTimedOutSagas(cutoff);
+    }
+
+    public Page<SagaInstanceEntity> listSagas(SagaStatus status, Pageable pageable) {
+        return status == null
+                ? repository.findAll(pageable)
+                : repository.findByStatus(status, pageable);
+    }
+
+    /**
+     * Disparo administrativo: força uma saga travada (nunca recebeu o evento de falha,
+     * mas está visivelmente parada) a entrar em compensação sem esperar o timeout automático.
+     */
+    @Transactional
+    public SagaInstanceEntity forceCompensation(UUID sagaId) {
+        SagaInstanceEntity saga = findBySagaId(sagaId);
+        OrderSagaState previousState = saga.getCurrentState();
+
+        OrderSagaState nextState = stateMachine
+                .transition(previousState, SagaEventType.MANUAL_COMPENSATION_TRIGGERED);
+
+        saga.setCurrentState(nextState);
+        saga.setStatus(SagaStatus.COMPENSATING);
+        saga.setUpdatedAt(LocalDateTime.now());
+
+        log.warn("Saga {} compensation manually triggered (was {})", sagaId, previousState);
+        return repository.save(saga);
     }
 }

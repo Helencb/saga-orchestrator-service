@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class OrderCommandProducer {
     private final SagaCommandProducer producer;
 
-    @Value("${saga.order-topic}")
-    private String orderTopic;
+    @Value("${saga.order-exchange}")
+    private String orderExchange;
 
     public void confirmOrder(ConfirmOrderCommand command) {
-        producer.publish(orderTopic, command);
+        producer.publish(orderExchange, "order.confirm", command);
     }
 
     public void cancelOrder(CancelOrderCommand command) {
-        producer.publish(orderTopic, command);
+        producer.publish(orderExchange, "order.cancel", command);
     }
 }

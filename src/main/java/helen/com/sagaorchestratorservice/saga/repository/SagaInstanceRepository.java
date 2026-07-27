@@ -2,6 +2,8 @@ package helen.com.sagaorchestratorservice.saga.repository;
 
 import helen.com.sagaorchestratorservice.saga.persistence.SagaInstanceEntity;
 import helen.com.sagaorchestratorservice.saga.state.SagaStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +20,9 @@ public interface SagaInstanceRepository extends JpaRepository<SagaInstanceEntity
 
     // Idempotência
     boolean existsBySagaId(UUID sagaId);
+
+    // Listagem administrativa paginada
+    Page<SagaInstanceEntity> findByStatus(SagaStatus status, Pageable pageable);
 
     @Query("""
         SELECT s FROM SagaInstanceEntity s

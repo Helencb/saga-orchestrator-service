@@ -15,9 +15,9 @@ public class SagaProperties {
 
     private Integer maxRetry = 3;
     private Integer timeoutSeconds = 300;
-    private String orderTopic;
-    private String paymentTopic;
-    private String inventoryTopic;
-    private String retryTopic;
+    private String orderExchange;
+    private String paymentExchange;
+    private String inventoryExchange;
+    private String retryExchange;
     private Map<String, String> queues;
 }

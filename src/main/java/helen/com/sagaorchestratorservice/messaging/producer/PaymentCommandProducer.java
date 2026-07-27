@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 public class PaymentCommandProducer {
     private final SagaCommandProducer producer;
 
-    @Value("${saga.payment-topic}")
-    private String paymentTopic;
+    @Value("${saga.payment-exchange}")
+    private String paymentExchange;
 
     public void processPayment(ProcessPaymentCommand command) {
-        producer.publish(paymentTopic, command);
+        producer.publish(paymentExchange, "payment.process", command);
     }
 
     public void refundPayment(RefundPaymentCommand command) {
-        producer.publish(paymentTopic, command);
+        producer.publish(paymentExchange, "payment.refund", command);
     }
 }

@@ -1,0 +1,17 @@
+# Perfil de produção: nenhuma credencial fica hardcoded aqui. Tudo vem de
+# variáveis de ambiente reais (DB_*, RABBITMQ_*, SAGA_*, ACTUATOR_*) - ver README.md.
+
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    helen.com.sagaorchestratorservice: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

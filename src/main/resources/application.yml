@@ -6,7 +6,7 @@ spring:
     name: saga-orchestrator-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/saga_db
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:saga_db}
     username: ${DB_USERNAME:root}
     # Sem default de senha real: em produção a env var é obrigatória
     # (o app falha ao subir em vez de usar uma senha fraca conhecida).
@@ -24,6 +24,12 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
 management:
   endpoints:
     web:
@@ -33,11 +39,6 @@ management:
   endpoint:
     health:
       show-details: when-authorized
-
-aws:
-  access-key: ${AWS_ACCESS_KEY:YOUR_ACCESS_KEY}
-  secret-key: ${AWS_SECRET_KEY:YOUR_SECRET_KEY}
-  region: ${AWS_REGION:us-east-1}
 
 security:
   actuator:
@@ -49,10 +50,10 @@ saga:
   timeout-seconds: 300
   timeout-check-interval-ms: 60000
 
-  order-topic: ${SAGA_ORDER_TOPIC:arn:aws:sns:us-east-1:000000000000:order-topic}
-  payment-topic: ${SAGA_PAYMENT_TOPIC:arn:aws:sns:us-east-1:000000000000:payment-topic}
-  inventory-topic: ${SAGA_INVENTORY_TOPIC:arn:aws:sns:us-east-1:000000000000:inventory-topic}
-  retry-topic: ${SAGA_RETRY_TOPIC:arn:aws:sns:us-east-1:000000000000:retry-compensation-topic}
+  order-exchange: ${SAGA_ORDER_EXCHANGE:order-exchange}
+  payment-exchange: ${SAGA_PAYMENT_EXCHANGE:payment-exchange}
+  inventory-exchange: ${SAGA_INVENTORY_EXCHANGE:inventory-exchange}
+  retry-exchange: ${SAGA_RETRY_EXCHANGE:retry-exchange}
 
   queues:
     order-created: ${SAGA_QUEUE_ORDER_CREATED:order-created-queue}

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 public class CompensationRetryProducer {
     private final SagaCommandProducer producer;
 
-    @Value("${saga.retry-topic}")
-    private String retryTopic;
+    @Value("${saga.retry-exchange}")
+    private String retryExchange;
 
     public void scheduleRetry(RetryCompensationCommand command) {
-        producer.publish(retryTopic, command);
+        producer.publish(retryExchange, "compensation.retry", command);
     }
 }
